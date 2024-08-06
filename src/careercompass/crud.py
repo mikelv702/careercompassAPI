@@ -38,7 +38,7 @@ def create_user(db: Session, user: schemas.CreateUser):
     return {'email': db_user.email, 'id': db_user.id}
 
 
-def activate_user(db: Session, user_email: int, activation_code: str):
+def activate_user(db: Session, user_email: str, activation_code: str):
     user = db.query(models.User).filter(models.User.email == user_email).first()
     test_code = "signup123"
     if activation_code == test_code:
