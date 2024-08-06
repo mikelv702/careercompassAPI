@@ -1,0 +1,38 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "career-compass"
+description= "Backend for Career Compass"
+version = "2024.8.0"
+dependencies = [
+  "fastapi",
+  "alembic",
+  "sqlalchemy",
+  "pyjwt",
+  "passlib[bcrypt]"
+]
+requires-python = ">= 3.12"
+authors = [
+  {name = "Michael Hall", email= "michael@rubberduck-labs.com"}
+]
+maintainers = [
+  {name= "Michael Hall", email = "michael@rubberduck-labs.com"}
+]
+readme = "README.md"
+classifiers = [
+  "Development Status :: 1 - Planning",
+  "Framework :: FastAPI",
+  "Programming Language :: Python :: 3.12"
+]
+
+[project.scripts]
+spam-cli = "spam:main_cli"
+
+[project.urls]
+Homepage = "https://example.com"
+Documentation = "https://readthedocs.org"
+Repository = "https://github.com/me/spam.git"
+Issues = "https://github.com/me/spam/issues"
+Changelog = "https://github.com/me/spam/blob/master/CHANGELOG.md"
