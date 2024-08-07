@@ -1,32 +1,37 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from typing import Annotated
 
 import jwt
 from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
-from passlib.context import CryptContext
+import bcrypt
 
-from crud import get_user_by_email
-from schemas import UserInDB, TokenData, User
-from database import SessionLocal
+from .crud import get_user_by_email
+from .schemas import TokenData, User
 from sqlalchemy.orm import Session
-from dependency import get_db
+from .dependency import get_db
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+#pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 SECRET_KEY = '09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7'  # FAKE
 ALGORITHM = 'HS256'
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    result = bcrypt.checkpw(plain_password.encode('utf-8'),
+                        hashed_password.encode('utf-8'))
+    print(result)
+    return result
 
 
 def get_password_hash(password: str) -> str:
-    return pwd_context.hash(password)
+
+    salt = bcrypt.gensalt()
+    hash = bcrypt.hashpw(password.encode('utf-8'), salt)
+    return hash
 
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
@@ -40,7 +45,8 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 
-def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)):
+def get_current_user(token: Annotated[str, Depends(oauth2_scheme)],
+                     db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -72,7 +78,9 @@ def get_current_active_user(
     return current_user
 
 
-def authenticate_user(db: Session = Depends(get_db), username: str, password: str):
+def authenticate_user(username: str, password: str,
+                      db: Session = Depends(get_db)):
+
     user = get_user_by_email(db, email=username)
     if not user.is_active:
         return False

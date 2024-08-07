@@ -15,14 +15,13 @@ class CreateCompletedTask(BaseModel):
 
 
 # Users
-class CreateUser(BaseModel):
-    username: str
-    password: str
-
-
 class UserBase(BaseModel):
     email: str | None = None
     full_name: str | None = None
+
+
+class CreateUser(UserBase):
+    password: str
 
 
 class User(UserBase):
@@ -44,3 +43,7 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     email: str | None = None
+
+
+class ErrorResponse(BaseModel):
+    detail: str
