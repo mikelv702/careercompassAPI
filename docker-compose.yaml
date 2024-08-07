@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  traefik:
+    image: traefik
+    command:
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=your-email@example.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./letsencrypt:/letsencrypt
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.your-domain.com`)"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.entrypoints=websecure"
+      - "traefik.http.routers.dashboard.tls.certresolver=myresolver"
+      - "traefik.http.routers.dashboard.middlewares=auth"
+      - "traefik.http.middlewares.auth.basicauth.users=admin:$$apr1$$xxxxxxxx$$yyyyyyyyyyyyyyyyyyyyyyyy"
+
+  your-app:
+    image: your-app-image:tag
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.your-app.rule=Host(`api.your-domain.com`)"
+      - "traefik.http.routers.your-app.entrypoints=websecure"
+      - "traefik.http.routers.your-app.tls.certresolver=myresolver"
+      # Add middleware for IP whitelist (optional)
+      - "traefik.http.routers.your-app.middlewares=ipwhitelist"
+      - "traefik.http.middlewares.ipwhitelist.ipwhitelist.sourcerange=127.0.0.1/32,192.168.1.0/24"
+    # Add any necessary environment variables, volumes, or other configurations for your app
