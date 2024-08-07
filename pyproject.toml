@@ -43,6 +43,9 @@ type = "virtual"
 path = ".venv"
 dependencies = ["pyright", "pytest", "pytest-cov"]
 
+[tool.hatch.envs.default.env-vars]
+SQLALCHEMY_DATABASE_URL = "sqlite:///./foo.db"
+
 [tool.hatch.envs.default.scripts]
 dev = "fastapi dev main.py"
 update-db = "alembic upgrade head"
