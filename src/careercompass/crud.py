@@ -1,14 +1,14 @@
 from datetime import datetime
 
 from sqlalchemy.orm import Session
+
 from . import models, schemas
-from passlib.context import CryptContext
+import bcrypt
 
-
-def get_password_hash(password: str):
-    pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
-    return pwd_context.encrypt(password)
-
+def get_password_hash(password: str) -> str:
+    salt = bcrypt.gensalt()
+    hash = bcrypt.hashpw(password.encode('utf-8'), salt)
+    return hash
 
 def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()

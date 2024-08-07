@@ -27,8 +27,6 @@ classifiers = [
   "Programming Language :: Python :: 3.12"
 ]
 
-[project.scripts]
-spam-cli = "spam:main_cli"
 
 [project.urls]
 Homepage = "https://example.com"
@@ -36,3 +34,16 @@ Documentation = "https://readthedocs.org"
 Repository = "https://github.com/me/spam.git"
 Issues = "https://github.com/me/spam/issues"
 Changelog = "https://github.com/me/spam/blob/master/CHANGELOG.md"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/careercompass"]
+
+[tool.hatch.envs.default]
+type = "virtual"
+path = ".venv"
+dependencies = ["pyright", "pytest", "pytest-cov"]
+
+[tool.hatch.envs.default.scripts]
+dev = "fastapi dev main.py"
+update-db = "alembic upgrade head"
+start-app = "fastapi run main.py"

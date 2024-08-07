@@ -1,21 +1,15 @@
 from datetime import timedelta
 from typing import Annotated
 
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
-from .schemas import (User, Token, CreateUser,
-                      CreateCompletedTask, CompletedTask)
-from .auth import (get_current_active_user,
-                   create_access_token,
-                   authenticate_user,
-                   ACCESS_TOKEN_EXPIRE_MINUTES)
-from .crud import (get_user_by_email, create_user,
-                   activate_user, create_completedtask,
-                   get_completed_task_for_user_query)
+from .auth import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token, get_current_active_user
+from .crud import activate_user, create_completedtask, create_user, get_completed_task_for_user_query, get_user_by_email
 from .dependency import get_db
+from .schemas import CompletedTask, CreateCompletedTask, CreateUser, Token, User
 
 app = FastAPI()
 
@@ -78,7 +72,7 @@ async def get_logged_in_user(logged_in_user: User = Depends(get_current_active_u
 async def get_user_completed_tasks(user: User = Depends(get_current_active_user),
                                    db: Session = Depends(get_db),
                                    skip: int = 0, limit: int = 10):
-    if limit < 100:
+    if limit > 100:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="You can not get more than 100 tasks",

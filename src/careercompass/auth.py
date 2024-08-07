@@ -1,17 +1,16 @@
 from datetime import datetime, timedelta
 from typing import Annotated
 
+import bcrypt
 import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
-import bcrypt
+from sqlalchemy.orm import Session
 
 from .crud import get_user_by_email
-from .schemas import TokenData, User
-from sqlalchemy.orm import Session
 from .dependency import get_db
-
+from .schemas import TokenData, User
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 #pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -22,13 +21,12 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     result = bcrypt.checkpw(plain_password.encode('utf-8'),
-                        hashed_password.encode('utf-8'))
+                        hashed_password)
     print(result)
     return result
 
 
 def get_password_hash(password: str) -> str:
-
     salt = bcrypt.gensalt()
     hash = bcrypt.hashpw(password.encode('utf-8'), salt)
     return hash
