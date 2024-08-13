@@ -1,0 +1,19 @@
+[Unit]
+Description=python-app
+Wants=network-online.target
+After=network-online.target
+#StartLimitBurst=5
+#StartLimitIntervalSec=60
+
+[Service]
+User=compass
+Group=compass
+Type=simple
+#Restart=on-failure
+#RestartSec=5
+EnvironmentFile=/home/compass/_target/.env
+WorkingDirectory=/home/compass/_target/src/careercompass
+ExecStart=/usr/local/bin/hatch run start-app
+
+[Install]
+WantedBy=multi-user.target

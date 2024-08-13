@@ -14,7 +14,7 @@ from .schemas import CompletedTask, CreateCompletedTask, CreateUser, Token, User
 app = FastAPI()
 
 origins = [
-    "http://localhost:3000",
+    "http://localhost:8000",
 ]
 app.add_middleware(CORSMiddleware, allow_origins=origins, allow_credentials=True,
                    allow_methods=["*"], allow_headers=["*"])
@@ -92,3 +92,9 @@ async def create_user_completed_task(task: CreateCompletedTask,
     completed_task = create_completedtask(db=db, completedtask=task, user_id=user.id)
     print(completed_task)
     return completed_task
+
+
+# Health Check
+@app.get('/health')
+async def health_check():
+    return {"status": "ok"}
