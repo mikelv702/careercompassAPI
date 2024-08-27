@@ -13,7 +13,8 @@ dependencies = [
   "pyjwt",
   "bcrypt", 
   "pydantic-settings",
-  "python-dotenv"
+  "python-dotenv",
+  "psycopg2-binary"
 ]
 requires-python = ">= 3.12"
 authors = [
@@ -51,4 +52,4 @@ SQLALCHEMY_DATABASE_URL = "sqlite:///./foo.db"
 [tool.hatch.envs.default.scripts]
 dev = "fastapi dev main.py"
 update-db = "alembic upgrade head"
-start-app = "fastapi run main.py"
+start-app = "fastapi run app/main.py"

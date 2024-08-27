@@ -21,15 +21,16 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     result = bcrypt.checkpw(plain_password.encode('utf-8'),
-                        hashed_password)
+                        hashed_password.encode('utf-8'))
     print(result)
     return result
 
 
 def get_password_hash(password: str) -> str:
     salt = bcrypt.gensalt()
-    hash = bcrypt.hashpw(password.encode('utf-8'), salt)
-    return hash
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+    string_password = hashed_password.decode('utf-8')
+    return string_password
 
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
@@ -84,6 +85,6 @@ def authenticate_user(username: str, password: str,
         return False
     if not user:
         return False
-    if not verify_password(password, user.hashed_password):
+    if not verify_password(password, get_password_hash(user.hashed_password)):
         return False
     return user
