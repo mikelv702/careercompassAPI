@@ -11,7 +11,9 @@ dependencies = [
   "alembic",
   "sqlalchemy",
   "pyjwt",
-  "bcrypt"
+  "bcrypt", 
+  "pydantic-settings",
+  "python-dotenv"
 ]
 requires-python = ">= 3.12"
 authors = [
