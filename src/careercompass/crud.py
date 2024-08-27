@@ -3,12 +3,15 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 
 from . import models, schemas
+
 import bcrypt
 
 def get_password_hash(password: str) -> str:
     salt = bcrypt.gensalt()
-    hash = bcrypt.hashpw(password.encode('utf-8'), salt)
-    return hash
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+    string_password = hashed_password.decode('utf-8')
+    return string_password
+
 
 def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()

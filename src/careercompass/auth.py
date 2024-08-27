@@ -85,6 +85,6 @@ def authenticate_user(username: str, password: str,
         return False
     if not user:
         return False
-    if not verify_password(password, get_password_hash(user.hashed_password)):
+    if not verify_password(password, user.hashed_password):
         return False
     return user
