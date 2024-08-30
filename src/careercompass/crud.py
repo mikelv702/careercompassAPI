@@ -3,8 +3,11 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 
 from . import models, schemas
+from .settings import get_app_settings
 
 import bcrypt
+
+settings = get_app_settings()
 
 def get_password_hash(password: str) -> str:
     salt = bcrypt.gensalt()
@@ -43,7 +46,7 @@ def create_user(db: Session, user: schemas.CreateUser):
 
 def activate_user(db: Session, user_email: str, activation_code: str):
     user = db.query(models.User).filter(models.User.email == user_email).first()
-    test_code = "signup123"
+    test_code = settings.signup_key
     if activation_code == test_code:
         user.is_active = True
         db.commit()

@@ -10,15 +10,17 @@ from .auth import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_
 from .crud import activate_user, create_completedtask, create_user, get_completed_task_for_user_query, get_user_by_email
 from .dependency import get_db
 from .schemas import CompletedTask, CreateCompletedTask, CreateUser, Token, User
+from .settings import get_app_settings
 
+settings = get_app_settings()
 app = FastAPI()
 
-origins = [
-    "http://localhost:8000",
-]
-app.add_middleware(CORSMiddleware, allow_origins=origins, allow_credentials=True,
-                   allow_methods=["*"], allow_headers=["*"])
-
+print(settings.allowed_origins)
+app.add_middleware(CORSMiddleware, 
+                allow_origins=settings.allowed_origins, 
+                allow_credentials=True,
+                allow_methods=["*"], 
+                allow_headers=["*"])
 
 @app.post("/token")
 async def login_for_access_token(

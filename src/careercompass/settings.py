@@ -11,6 +11,10 @@ class Settings(BaseSettings):
     db_host: str = "dbhost"
     db_name: str = "careercompass"
     db_local: bool = False
+    
+    allowed_origins: list[str] = ["http://localhost:3000"]
+    secret_key: str = None
+    signup_key: str = "signup123"
 
     model_config = SettingsConfigDict(env_file=".env")
 
