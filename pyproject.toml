@@ -14,7 +14,8 @@ dependencies = [
   "bcrypt", 
   "pydantic-settings",
   "python-dotenv",
-  "psycopg2-binary"
+  "psycopg2-binary",
+  "httpx"
 ]
 requires-python = ">= 3.12"
 authors = [

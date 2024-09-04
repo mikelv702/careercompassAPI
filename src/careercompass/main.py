@@ -11,9 +11,11 @@ from .crud import activate_user, create_completedtask, create_user, get_complete
 from .dependency import get_db
 from .schemas import CompletedTask, CreateCompletedTask, CreateUser, Token, User
 from .settings import get_app_settings
+from .oauth.route import router as github_router
 
 settings = get_app_settings()
 app = FastAPI()
+app.include_router(github_router)
 
 print(settings.allowed_origins)
 app.add_middleware(CORSMiddleware, 

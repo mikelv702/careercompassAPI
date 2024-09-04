@@ -29,12 +29,13 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     print(result)
     return result
 
-
-def get_password_hash(password: str) -> str:
-    salt = bcrypt.gensalt()
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
-    string_password = hashed_password.decode('utf-8')
-    return string_password
+# This function was moved to Crud to prevent duplication and circular dependencies
+# Not the best implementation, but should be fixed during refactoring
+# def get_password_hash(password: str) -> str:
+#     salt = bcrypt.gensalt()
+#     hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+#     string_password = hashed_password.decode('utf-8')
+#     return string_password
 
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
@@ -92,3 +93,4 @@ def authenticate_user(username: str, password: str,
     if not verify_password(password, user.hashed_password):
         return False
     return user
+

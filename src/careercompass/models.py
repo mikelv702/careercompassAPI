@@ -26,3 +26,7 @@ class User(Base):
     is_active = Column(Boolean, default=False)
 
     completed_tasks = relationship('CompletedTask', back_populates='user')
+
+    def get_display_name(self) -> str: 
+        # Later this should return nickname once implemented.
+        return self.email

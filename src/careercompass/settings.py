@@ -15,7 +15,8 @@ class Settings(BaseSettings):
     allowed_origins: list[str] = ["http://localhost:3000"]
     secret_key: str = None
     signup_key: str = "signup123"
-
+    github_client_id: str = None
+    github_client_secret: str = None
     model_config = SettingsConfigDict(env_file=".env")
 
 
