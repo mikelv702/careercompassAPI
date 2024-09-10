@@ -6,9 +6,9 @@ from sqlalchemy.orm import Session
 from .crud import create_completedtask,get_completed_task_for_user_query
 from .schemas import CompletedTaskBase, CreateCompletedTask
 
-from ..auth import get_current_active_user
+from ..auth.helpers import check_current_user_active
 from ..dependency import get_db
-from ..schemas import User
+from ..user.schemas import User
 
 
 logger = logging.getLogger(__name__)
@@ -17,7 +17,7 @@ tasks_router = APIRouter(tags=["Tasks"])
 
 
 @tasks_router.get('/task', response_model=list[CompletedTaskBase])
-async def get_completed_tasks_for_user(user: User = Depends(get_current_active_user), db: Session = Depends(get_db), skip: int = 0, limit: int = 10):
+async def get_completed_tasks_for_user(user: User = Depends(check_current_user_active), db: Session = Depends(get_db), skip: int = 0, limit: int = 10):
     logger.debug(f"Getting tasks for user_id: {user.id}")
     if limit > 100: 
         logger.error('Requested limit of tasks is over 100!')
@@ -31,7 +31,7 @@ async def get_completed_tasks_for_user(user: User = Depends(get_current_active_u
 
 
 @tasks_router.post("/task", response_model=CompletedTaskBase)
-async def create_completed_task_for_user(task: CreateCompletedTask, user: User = Depends(get_current_active_user), db: Session = Depends(get_db)):
+async def create_completed_task_for_user(task: CreateCompletedTask, user: User = Depends(check_current_user_active), db: Session = Depends(get_db)):
     logger.debug(f"Creating task for user: {user.id}, task: {task}")
     completed_task = create_completedtask(db=db, completedtask=task, user_id=user.id)
     logger.info(f"Task Created: {completed_task}")

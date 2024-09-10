@@ -1,9 +1,9 @@
 services:
 
   careercompassapi:
-    image: careercompassapi:github
+    image: careercompassapi
     environment:
-      - DEBUG=${DEBUG}
+      - APP_LOG_DEBUG=${APP_LOG_DEBUG}
       - ADMIN_EMAIL=${ADMIN_EMAIL}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}

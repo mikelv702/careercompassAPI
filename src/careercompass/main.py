@@ -7,27 +7,37 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
-from .auth import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token, get_current_active_user
-from .crud import activate_user, create_user, get_user_by_email
+from .auth.helpers import create_access_token, authenticate_username_password
 from .dependency import get_db
-from .schemas import CreateUser, Token, User
+from .schemas import Token
 from .settings import get_app_settings
-from .oauth.route import router as github_router
+
+from .auth.router import auth_router
 from .tasks.router import tasks_router
+from .user.router import user_router
 
 
 logger = logging.getLogger(__name__)
 
 
 settings = get_app_settings()
-logger.debug(f"Settings Loaded: {settings}")
+if settings.app_log_debug:
+    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+    logger.debug('DEBUG ENABLED')
+else:
+    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
+    logger.info(f"DEBUG Logs: {settings.app_log_debug}")
+    logger.info('DEBUG DISABLED')
+
 logger.info('Settings Loaded...')
+logger.debug(f"Settings Loaded: {settings}")
 
 
 app = FastAPI()
 logger.info("Loading Routers...")
-app.include_router(github_router)
+app.include_router(auth_router)
 app.include_router(tasks_router)
+app.include_router(user_router)
 
 
 logger.debug(f"Allowed Origins: {settings.allowed_origins}")
@@ -42,7 +52,7 @@ app.add_middleware(CORSMiddleware,
 async def login_for_access_token(
         form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
         db: Session = Depends(get_db)) -> Token:
-    user = authenticate_user(db=db,
+    user = authenticate_username_password(db=db,
                              username=form_data.username,
                              password=form_data.password)
     if not user:
@@ -52,7 +62,7 @@ async def login_for_access_token(
             headers={"WWW-Authenticate": "Bearer"},
         )
     logger.debug(f"User: {user}")
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token_expires = timedelta(minutes=45)
     access_token = create_access_token(
         data={"sub": user.email},
         expires_delta=access_token_expires
@@ -60,56 +70,31 @@ async def login_for_access_token(
     return Token(access_token=access_token, token_type="bearer")
 
 
-@app.post('/user')
-async def register_new_user(user: CreateUser, db: Session = Depends(get_db)):
-    db_user = get_user_by_email(db, user.email)
-    if db_user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already registered",
-        )
-    return create_user(db=db, user=user)
-
-
-@app.post('/user/activate/')
-async def activate_registered_user(email: str,
-                                   activation_code: str,
-                                   db: Session = Depends(get_db)):
-    if activate_user(db=db, user_email=email, activation_code=activation_code):
-        return {"status": "success"}
-    else:
-        return {"status": "failed"}
-
-
-@app.get("/user/me", response_model=User)
-async def get_logged_in_user(logged_in_user: User = Depends(get_current_active_user)):
-    return logged_in_user
-
-
-# @app.get("/task", response_model=list[CompletedTask])
-# async def get_user_completed_tasks(user: User = Depends(get_current_active_user),
-#                                    db: Session = Depends(get_db),
-#                                    skip: int = 0, limit: int = 10):
-#     if limit > 100:
+# @app.post('/user')
+# async def register_new_user(user: CreateUser, db: Session = Depends(get_db)):
+#     db_user = get_user_by_email(db, user.email)
+#     if db_user:
 #         raise HTTPException(
 #             status_code=status.HTTP_400_BAD_REQUEST,
-#             detail="You can not get more than 100 tasks",
+#             detail="Email already registered",
 #         )
-#     tasks = get_completed_task_for_user_query(db=db,
-#                                               user_id=user.id,
-#                                               skip=skip,
-#                                               limit=limit)
-#     print(f"Number of tasks: {len(tasks)}")
-#     return tasks
+#     return create_user(db=db, user=user)
 
 
-# @app.post("/task", response_model=CompletedTask)
-# async def create_user_completed_task(task: CreateCompletedTask,
-#                                      user: User = Depends(get_current_active_user),
-#                                      db: Session = Depends(get_db)):
-#     completed_task = create_completedtask(db=db, completedtask=task, user_id=user.id)
-#     print(completed_task)
-#     return completed_task
+# @app.post('/user/activate/')
+# async def activate_registered_user(email: str,
+#                                    activation_code: str,
+#                                    db: Session = Depends(get_db)):
+#     if activate_user(db=db, user_email=email, activation_code=activation_code):
+#         return {"status": "success"}
+#     else:
+#         return {"status": "failed"}
+
+
+# @app.get("/user/me", response_model=User)
+# async def get_logged_in_user(logged_in_user: User = Depends(get_current_active_user)):
+#     return logged_in_user
+
 
 
 # Health Check

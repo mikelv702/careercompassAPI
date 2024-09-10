@@ -28,17 +28,20 @@ def get_completed_tasks(db: Session, user_id: int, skip: int = 0, limit: int = 1
 
 
 def get_completed_task_for_user_query(db: Session, user_id: int, skip: int = 0, limit: int = 100, from_date: datetime = None, to_date: datetime = None):
-    db_query = db.query(db.query(CompletedTask))
-    db_query_filter = [CompletedTask.user_id == user_id]
+    try:
+        db_query = db.query(CompletedTask)
+        db_query_filter = [CompletedTask.user_id == user_id]
 
-    if from_date: 
-        logger.info(f"Query Tasks created after: {from_date}")
-        db_query_filter.append(CompletedTask.created_at >= from_date)
-    
-    if to_date: 
-        logger.info(f"Query Tasks created before: {to_date}")
-        db_query_filter.append(CompletedTask.created_date <= to_date)
+        if from_date: 
+            logger.info(f"Query Tasks created after: {from_date}")
+            db_query_filter.append(CompletedTask.created_at >= from_date)
+        
+        if to_date: 
+            logger.info(f"Query Tasks created before: {to_date}")
+            db_query_filter.append(CompletedTask.created_date <= to_date)
 
-    db_results = db_query.filter(*db_query_filter).offset(skip).limit(limit).all()
-    logger.info(f"Number of results found: {len(db_results)}")
-    return db_results
+        db_results = db_query.filter(*db_query_filter).offset(skip).limit(limit).all()
+        logger.info(f"Number of results found: {len(db_results)}")
+        return db_results
+    except Exception as e: 
+        logger.error(f"Unhandled Exception: {e}")
