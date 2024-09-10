@@ -1,7 +1,7 @@
 services:
 
   careercompassapi:
-    image: careercompassapi
+    image: careercompassapi:github
     environment:
       - DEBUG=${DEBUG}
       - ADMIN_EMAIL=${ADMIN_EMAIL}
@@ -9,8 +9,13 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_HOST=${DB_HOST}
       - DB_NAME=${DB_NAME}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
+      - SECRET_KEY=${SECRET_KEY}
+      - SIGNUP_KEY=${SIGNUP_KEY}
+      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
+      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
     ports:
-      - "8000:8000"
+      - "8001:8000"
     depends_on:
       - db
 
@@ -22,7 +27,18 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_DB: ${DB_NAME}
     volumes:
-      - pgdata:/var/lib/postgresql/data 
+      - pgdata:/var/lib/postgresql/data
+
+  careercompassreact:
+    image: careercompass-react:github
+    command: npm start
+    restart: always
+    environment:
+      - REACT_APP_API_URL=${REACT_APP_API_URL}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - careercompassapi
 
 volumes:
   pgdata:

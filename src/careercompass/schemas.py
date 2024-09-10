@@ -1,17 +1,16 @@
-from datetime import datetime
 
 from pydantic import BaseModel
 
 
-# Completed Tasks
-class CompletedTask(BaseModel):
-    id: int
-    description: str = None
-    created_at: datetime = None
+# # Completed Tasks
+# class CompletedTask(BaseModel):
+#     id: int
+#     description: str = None
+#     created_at: datetime = None
 
 
-class CreateCompletedTask(BaseModel):
-    description: str
+# class CreateCompletedTask(BaseModel):
+#     description: str
 
 
 # Users
