@@ -3,8 +3,8 @@ import logging
 
 from sqlalchemy.orm import Session
 
-from .schemas import CreateCompletedTask
-from .models import CompletedTask
+from .schemas import CreateCompletedTask, OpenTaskCreate
+from .models import CompletedTask, OpenTask, OpenTaskNotes
 
 
 logger = logging.getLogger(__name__)
@@ -45,3 +45,14 @@ def get_completed_task_for_user_query(db: Session, user_id: int, skip: int = 0, 
         return db_results
     except Exception as e: 
         logger.error(f"Unhandled Exception: {e}")
+
+
+def create_open_task_for_user(db: Session, user_id: int, NewOpenTask: OpenTaskCreate):
+    try:
+        new_open_task = OpenTask(**OpenTaskCreate)
+        db.add(new_open_task)
+        db.commit()
+        db.refresh(new_open_task)
+        return new_open_task
+    except Exception as e: 
+        logger.error(f"Unhandled Exception when creating new open task: {e}")

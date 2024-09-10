@@ -11,3 +11,21 @@ class CompletedTaskBase(BaseModel):
 
 class CreateCompletedTask(BaseModel):
     description: str
+
+
+class OpenTaskBase(BaseModel):
+    id: int
+    description: str = None
+    created_at: datetime = None
+    notes: list[OpenTaskNoteDisplay] = None
+
+class OpenTaskCreate(BaseModel):
+    description: str
+
+
+class OpenTaskNoteCreate(BaseModel):
+    note: str
+
+
+class OpenTaskNoteDisplay(OpenTaskNoteCreate):
+    id: int
