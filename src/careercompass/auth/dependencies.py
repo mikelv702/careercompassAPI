@@ -1,7 +1,6 @@
 import jwt
 from fastapi import Header, HTTPException, status
 from fastapi.security.utils import get_authorization_scheme_param
-from pydantic import ValidationError
 
 from ..settings import get_app_settings
 
@@ -24,6 +23,6 @@ def get_user_from_header(*, authorization: str = Header(None)):
             token, settings.secret_key, algorithms=['HS256']
         )
         # Retruning just the payload for now since we are not creating tokens with UserData
-        return pay_load
+        return payload
     except jwt.PyJWTError:
         raise credentials_exception

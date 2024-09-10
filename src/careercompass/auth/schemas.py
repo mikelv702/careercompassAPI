@@ -13,3 +13,10 @@ class GithubUser(BaseModel):
     location: str
     email: str
     avatar_url: str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    email: str | None = None
