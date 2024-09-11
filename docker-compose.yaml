@@ -30,7 +30,7 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   careercompassreact:
-    image: careercompass-react:github
+    image: careercompass-react
     command: npm start
     restart: always
     environment:
