@@ -1,5 +1,5 @@
 pipeline {
-    agent {'lab-builder'}
+    agent {label 'lab-builder'}
     options {
         skipStagesAfterUnstable()
     }
