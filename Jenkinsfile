@@ -26,8 +26,13 @@ pipeline {
         }
         stage('Test'){
             steps {
-                 echo 'Empty'
 				 echo 'Running Tests'
+				 script{
+					app.withRun() {
+						sh 'echo running inside container'
+						sh 'cd /code/app'
+					}
+				}
             }
         }
         stage('Deploy') {
