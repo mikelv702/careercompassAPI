@@ -11,7 +11,11 @@ pipeline {
                 }
             }
         }
-
+		stage('Lint') {
+			steps {
+				ruff check
+			}
+		}
         stage('Build') { 
             steps { 
                 script{
@@ -22,6 +26,7 @@ pipeline {
         stage('Test'){
             steps {
                  echo 'Empty'
+				 echo 'Running Tests'
             }
         }
         stage('Deploy') {
