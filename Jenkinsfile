@@ -14,7 +14,7 @@ pipeline {
 		stage('Lint') {
 			steps {
 				sh 'python3 -m pip install ruff'
-				sh 'ruff check'
+				sh 'python3 -m ruff check'
 			}
 		}
         stage('Build') { 
