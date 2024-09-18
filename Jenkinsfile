@@ -13,7 +13,8 @@ pipeline {
         }
 		stage('Lint') {
 			steps {
-				ruff check
+				sh 'python3 -m pip install ruff'
+				sh 'ruff check'
 			}
 		}
         stage('Build') { 
@@ -32,7 +33,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script{
-                        docker.withRegistry('https://992382387335.dkr.ecr.us-west-2.amazonaws.com', 'ecr:us-west-2:ecr-aws-creds') {
+                    docker.withRegistry('https://992382387335.dkr.ecr.us-west-2.amazonaws.com', 'ecr:us-west-2:ecr-aws-creds') {
                     app.push("${env.BUILD_NUMBER}")
                     app.push("latest")
                     }
