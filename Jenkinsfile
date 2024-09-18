@@ -34,9 +34,10 @@ pipeline {
             steps {
                 script{
 					if(env.BRANCH_NAME == 'main') {
-                    docker.withRegistry('https://992382387335.dkr.ecr.us-west-2.amazonaws.com', 'ecr:us-west-2:ecr-aws-creds') {
-                    app.push("${env.BUILD_NUMBER}")
-                    app.push("latest")
+                    	docker.withRegistry('https://992382387335.dkr.ecr.us-west-2.amazonaws.com', 'ecr:us-west-2:ecr-aws-creds') {
+                    		app.push("${env.BUILD_NUMBER}")
+                    		app.push("latest")
+					} 
 					} else {echo "Development Branch!"}
 					
                     }
