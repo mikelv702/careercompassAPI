@@ -39,7 +39,7 @@ pipeline {
                     		app.push("latest")
 					} 
 					} else {echo "Development Branch!"}
-					
+					}
                     }
                 }
             }
