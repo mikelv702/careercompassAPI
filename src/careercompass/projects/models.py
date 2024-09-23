@@ -17,3 +17,4 @@ class ProjectsModel(Base):
     completed = Column(Bool)
     created_at = Column(DateTime, default=func.now())
     estimated_due = Column(DateTime)
+    status_note = Column(String)

@@ -29,7 +29,7 @@ def list_user_projects(user: User = Depends(check_current_user_active), db: Sess
 
 
 @project_router.get("/{project_id}", response_model=ProjectSchema)
-def get_project(user: User = Depends(check_current_user_active), db: Session = Depends(get_db)):
+def get_project(project_id, user: User = Depends(check_current_user_active), db: Session = Depends(get_db)):
     user_project = get_user_project(
         db = db, 
         project_id = project_id

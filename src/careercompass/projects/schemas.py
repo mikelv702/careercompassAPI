@@ -9,6 +9,7 @@ class CreateProjectSchema(BaseModel):
     estimated_due: datetime
     custom_status: str
     completed: bool
+    status_note: str
 
 class ProjectSchema(CreateProjectSchema):
     id: int

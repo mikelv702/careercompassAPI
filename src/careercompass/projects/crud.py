@@ -16,8 +16,9 @@ def get_user_projects_list(db: Session, user_id: int, skip: int =0, limit: int =
         db_query = db.query(ProjectsModel)
         db_query_filter = [ProjectsModel.user_id == user_id]
 
-        for keys in kwargs.keys():
+        for key in kwargs.keys():
             logger.info(f"Query Key: {key}")
+            
         
         query_result = db_query.filter(*db_query_filter).offset(skip).limit(limit).all()
         return query_result
@@ -40,6 +41,8 @@ def get_user_project(db: Session, project_id: int):
 def create_user_project(db: Session, user_id: int, new_project: CreateProjectSchema):
     logger.info('Creating new project')
     try: 
+        logger.info(f"User requested new project: {user_id}")
+        logger.info(f"New Project: {new_project}")
         db_project = ProjectsModel(**new_project)
         db.add(db_project)
         db.commit()
@@ -55,7 +58,7 @@ def update_user_project(db: Session, user_id: int, project_id: int, updated_proj
     logger.info(f"Updating Project {project_id}")
     try: 
         current_db_project = db.query(ProjectsModel).filter(ProjectsModel.id == project_id).first()
-        current_db_project(**updated_db_project)
+        current_db_project(**updated_project)
         db.commit()
         db.refresh(current_db_project)
         return current_db_project
