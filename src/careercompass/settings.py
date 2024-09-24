@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     signup_key: str = "signup123"
     github_client_id: str = None
     github_client_secret: str = None
+    featureflags: list[str] = []
     model_config = SettingsConfigDict(env_file=".env")
 
 

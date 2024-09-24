@@ -39,6 +39,10 @@ app.include_router(auth_router)
 app.include_router(tasks_router)
 app.include_router(user_router)
 
+if "projects_api" in settings.featureflags:
+    from .projects.router import project_router
+    app.include_router(project_router)
+
 
 logger.debug(f"Allowed Origins: {settings.allowed_origins}")
 app.add_middleware(CORSMiddleware, 
