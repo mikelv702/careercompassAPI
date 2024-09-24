@@ -3,7 +3,7 @@ import jwt
 import logging
 from datetime import datetime, timedelta
 from typing import Annotated
-from jwt.exceptions import InvalidTokenError
+from jwt.exceptions import InvalidTokenError, DecodeError
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -83,7 +83,7 @@ def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Session 
     token_data = decode_access_token(token)
     current_user = get_user_by_email(db, email=token_data.email)
     if current_user is None:
-        logger.error(f'Current User is None')
+        logger.error('Current User is None')
         raise CREDENTIAL_EXCEPTION
     logger.info('Current User Found')
     logger.debug(f"Current User: {current_user}")
