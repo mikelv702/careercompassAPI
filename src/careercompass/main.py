@@ -40,7 +40,7 @@ app.include_router(tasks_router)
 app.include_router(user_router)
 
 if "projects_api" in settings.featureflags:
-    from .projects.router improt project_router
+    from .projects.router import project_router
     app.include_router(project_router)
 
 
