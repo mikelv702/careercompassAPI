@@ -3,7 +3,7 @@ import logging
 from fastapi import APIRouter,Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from .crud import get_user_projects_list, get_user_project, create_user_project, update_user_project
+from .crud import get_user_projects_list, get_user_project, create_user_project, update_user_project, delete_user_project
 from .schemas import CreateProjectSchema, ProjectSchema, UpdateProjectSchema
 
 from ..auth.helpers import check_current_user_active
@@ -66,4 +66,16 @@ def update_project(project_id, updated_project: UpdateProjectSchema, user: User 
         raise  HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="You are not authorized to edit this project"
+        )
+
+@project_router.delete("/{project_id}")
+def delete_project(project_id: int, user: User = Depends(check_current_user_active), db: Session = Depends(get_db)):
+    try: 
+        delete_user_project(db=db, project_id=project_id, user_id=user.id)
+        return True
+    except Exception as err:
+        logger.error(f"Exception: {err}")
+        raise  HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="You are not authorized to delete this project"
         )

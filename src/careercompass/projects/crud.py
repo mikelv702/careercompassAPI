@@ -10,6 +10,10 @@ from .schemas import CreateProjectSchema
 logger = logging.getLogger(__name__)
 
 
+class CCDBUnauthorized(Exception):
+    pass
+
+
 def get_user_projects_list(db: Session, user_id: int, skip: int =0, limit: int = 100, **kwargs):
     try: 
         db_query = db.query(ProjectsModel)
@@ -71,3 +75,18 @@ def update_user_project(db: Session, user_id: int, project_id: int, updated_proj
         logger.error("SQL ERROR")
     except Exception as e: 
         logger.error(f"Unhandled Exception: {e}")    
+
+def delete_user_project(db: Session, user_id: int, project_id: int):
+    logger.info(f"User: {user_id} requested project {project_id} to be deleted")
+    try: 
+        db_project = db.query(ProjectsModel).filter(ProjectsModel.id == project_id).first()
+        if db_project.user_id == user_id:
+            db.delete(db_project)
+            db.commit()
+            logger.info(f"{project_id} was deleted by {user_id}")
+        else:
+            raise CCDBUnauthorized("Unauthorized")
+    except exc.SQLAlchemyError as err:
+        logger.error(f"SQL Alchemy Error! {err}")
+    except Exception as err: 
+        logger.error(f"Unhandled Exception: {err}")
