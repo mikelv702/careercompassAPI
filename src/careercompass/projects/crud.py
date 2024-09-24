@@ -43,7 +43,7 @@ def create_user_project(db: Session, user_id: int, new_project: CreateProjectSch
     try: 
         logger.info(f"User requested new project: {user_id}")
         logger.info(f"New Project: {new_project}")
-        db_project = ProjectsModel(**new_project)
+        db_project = ProjectsModel(user_id = user_id, **new_project.model_dump())
         db.add(db_project)
         db.commit()
         db.refresh(db_project)
@@ -58,7 +58,13 @@ def update_user_project(db: Session, user_id: int, project_id: int, updated_proj
     logger.info(f"Updating Project {project_id}")
     try: 
         current_db_project = db.query(ProjectsModel).filter(ProjectsModel.id == project_id).first()
-        current_db_project(**updated_project)
+        updated_project_dict = updated_project.model_dump(exclude_unset=True)
+        logger.info(f"Settings to update: {updated_project_dict}")
+        logger.info(f"Current DB object: {current_db_project}")
+        for key, value in updated_project_dict.items():
+            logger.info(f"Key: {key}, Value: {value}")
+            setattr(current_db_project, key, value)
+        logger.info(f"After update: {current_db_project}")
         db.commit()
         db.refresh(current_db_project)
         return current_db_project

@@ -11,6 +11,14 @@ class CreateProjectSchema(BaseModel):
     completed: bool
     status_note: str
 
+class UpdateProjectSchema(BaseModel):
+    title: str = None
+    description: str = None
+    estimated_due: datetime = None
+    custom_status: str = None
+    completed: bool = None
+    status_note: str = None
+
 class ProjectSchema(CreateProjectSchema):
     id: int
     user_id: int
